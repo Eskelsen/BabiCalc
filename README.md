@@ -1,2 +1,2 @@
 # BabiCalc
-Ferramenta para orçamento pessoal
+Ferramenta para orçamento pessoal.
