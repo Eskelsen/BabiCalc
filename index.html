@@ -33,6 +33,10 @@
       font-weight: normal;
       color: #666;
     }
+	
+	.onlytosee {
+		color: #999;
+	}
   </style>
 </head>
 <body class="bg-light py-3">
@@ -46,7 +50,7 @@
       <label class="form-label">Orçamento Mensal (R$)
 		<small class="text-muted" title="Inclusive vale refeição e alimentação, ok?">Todas as receitas</small>
 	  </label>
-      <input type="number" step="0.01" class="form-control" id="orcamento" value="1000" min="0" 
+      <input type="number" step="0.01" class="form-control" id="orcamento" value="1000"
 	  placeholder="Inclusive vale refeição e alimentação, ok?"
 	  title="Inclusive vale refeição e alimentação, ok?">
     </div>
@@ -70,13 +74,13 @@
 	<hr class="my-3">
 
     <div class="mb-2">
-      <label class="form-label">Gasto Corrente
-	    <small class="text-muted">(fixo + variável)</small>
+      <label class="form-label onlytosee">Gasto Corrente
+	    <small>(fixo + variável)</small>
 		<span>(<span id="corrente-percent">10</span>%)</span>
 	  </label>
 	  <div class="input-row">
-		  <input type="number" step="0.01" class="form-control" id="corrente-valor" disabled>
-		  <input type="range" class="form-range" id="corrente-slider" min="0" max="100" disabled>
+		  <input type="number" step="0.01" class="form-control onlytosee" id="corrente-valor" disabled>
+		  <input type="range" class="form-range onlytosee" id="corrente-slider" min="0" max="100" disabled>
 	  </div>
     </div>
 
@@ -94,7 +98,7 @@
       <label class="form-label">Reserva <span>(<span id="reserva-percent">34</span>%)</span></label>
       <div class="input-row">
         <input type="number" step="0.01" class="form-control" id="reserva-valor" disabled>
-        <input type="range" class="form-range" id="reserva-slider" min="0" max="100">
+        <input type="range" class="form-range" id="reserva-slider" min="0" max="100" disabled>
       </div>
     </div>
   </div>
@@ -108,7 +112,7 @@ const orcamentoGlobal = document.getElementById('orcamento');
 const fixoSlider = document.getElementById('fixo-slider');
 const variavelSlider = document.getElementById('variavel-slider');
 const feriasSlider = document.getElementById('ferias-slider');
-const reservaSlider = document.getElementById('reserva-percent');
+const reservaSlider = document.getElementById('reserva-slider');
 
 fixoSlider.value = 34;
 variavelSlider.value = 22;
@@ -123,36 +127,42 @@ elements.forEach((element) => {
 	});
 })
 
-function atualizarQuadro(exclude = false){
-	if (exclude) {
+function atualizarQuadro(exclude = 'reserva'){
+
+	let livre = reservaSlider.value;
+	var somaTotal = somatoria() - reservaSlider.value;
+	
+	reservaSlider.value = 100 - parseFloat(somaTotal);
+	
+	if (livre && parseFloat(somaTotal) <= 100) {
 		var percent = parseFloat(document.getElementById(exclude + '-slider').value) || 0;
-		let orcamento = parseFloat(orcamentoGlobal.value) || 0;
-		let variavel = (percent / 100) * orcamento;
-		document.getElementById(exclude + '-valor').value = variavel.toFixed(2);
-		document.getElementById(exclude + '-percent').textContent = percent.toFixed(1);
+	} else {
+		var percent = parseFloat(document.getElementById(exclude + '-percent').textContent);
+		document.getElementById(exclude + '-slider').value = percent;
 	}
 	
-	var parte = isNaN(parseFloat(percent)) ? 100 : parseFloat(percent);
+	let orcamento = parseFloat(orcamentoGlobal.value) || 0;
+	let variavel = (percent / 100) * orcamento;
+	document.getElementById(exclude + '-valor').value = variavel.toFixed(2);
+	document.getElementById(exclude + '-percent').textContent = percent.toFixed(1);
 	
-    const restantes = elements.filter(v => v !== exclude);
+	const restantes = elements.filter(v => v !== exclude);
+	
     restantes.forEach((restante) => {
 		const restanteValor = document.getElementById(restante + '-valor');
 		const restanteSlider = document.getElementById(restante + '-slider');
 		const restantePercent = document.getElementById(restante + '-percent');
 		let orcamento = parseFloat(orcamentoGlobal.value);
-		let pre_percent = parseFloat(restanteSlider.value) || 0;
-		let percent = novaPorcentagem(pre_percent,parte);
+		let percent = parseFloat(restanteSlider.value) || 0;
 		let variavel = (percent / 100) * orcamento;
-		restanteValor.value = variavel.toFixed(2);
+		restanteValor.value = (variavel) ? variavel.toFixed(2) : 0;
 		restanteSlider.value = percent.toFixed(2);
 		restantePercent.textContent = percent.toFixed(1);
   })
   gastoCorrente();
-}
-
-function novaPorcentagem(antiga,parte){
-	let disponivel = 100 - parte;
-	return (antiga*disponivel)/100;
+  if (exclude!='reserva') {
+	atualizarQuadro('reserva');
+  }
 }
 
 function gastoCorrente(){
@@ -164,6 +174,13 @@ function gastoCorrente(){
 	let percent = parseFloat(pfixo) + parseFloat(pvariavel);
 	document.getElementById('corrente-slider').value = percent.toFixed(2);
 	document.getElementById('corrente-percent').textContent = percent.toFixed(2);
+}
+
+function somatoria(){
+	return total = elements.reduce((soma, id) => {
+			const el = document.getElementById(id + '-slider');
+			return soma + +el.value;
+		}, 0);
 }
 
 orcamentoGlobal.addEventListener('input', function(e) {
