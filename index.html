@@ -30,28 +30,34 @@
     }
 
     .form-label span {
+	  font-size: 11px;
       font-weight: normal;
-      color: #666;
+      color: #ba1a35;
+    }
+	
+    .form-label small {
+	  font-size: 11px;
+      font-weight: normal;
     }
 	
 	.onlytosee {
 		color: #999;
 	}
+
   </style>
 </head>
 <body class="bg-light py-3">
 
 	<div class="container">
     <h1 class="text-center">BabiCalc</h1>
-	<p class="text-center"><a href="https://github.com/Eskelsen/BabiCalc" target="_blank" style="color:#c7254e; text-decoration:none; background-color:#f9f2f4; padding:2px 4px; 
-font-family:monospace; border-radius:4px;">Repositório no GitHub</a></p>
+
 	<form class="form-control">
 
     <div class="mb-2">
       <label class="form-label">Orçamento Mensal (R$)
 		<small class="text-muted" title="Inclusive vale refeição e alimentação, ok?">Todas as receitas</small>
 	  </label>
-      <input type="number" step="0.01" class="form-control" id="orcamento" value="1000"
+      <input type="number" step="0.01" class="form-control" id="orcamento" value=""
 	  placeholder="Inclusive vale refeição e alimentação, ok?"
 	  title="Inclusive vale refeição e alimentação, ok?">
     </div>
@@ -65,7 +71,10 @@ font-family:monospace; border-radius:4px;">Repositório no GitHub</a></p>
     </div>
 
     <div class="mb-2">
-      <label class="form-label">Gasto Variável <span>(<span id="variavel-percent">22</span>%)</span> <small>(R$ <span id="gasto-dia">0.00</span>/dia)</small></label>
+      <label class="form-label">Gasto Variável
+		  <span>(<span id="variavel-percent">22</span>%)</span>
+		  <small>(R$ <span id="gasto-dia">0.00</span>/dia)</small>
+	  </label>
       <div class="input-row">
         <input type="number" step="0.01" class="form-control" id="variavel-valor" disabled>
         <input type="range" class="form-range" id="variavel-slider" min="0" max="100">
@@ -88,7 +97,10 @@ font-family:monospace; border-radius:4px;">Repositório no GitHub</a></p>
     <hr class="my-3">
 
     <div class="mb-2">
-      <label class="form-label">Férias <span>(<span id="ferias-percent">10</span>%)</span></label>
+      <label class="form-label">Férias
+		<span>(<span id="ferias-percent">10</span>%)</span>
+		<small>(R$ <span id="ferias-total">0.00</span> em 11 meses)</small>
+	  </label>
       <div class="input-row">
         <input type="number" step="0.01" class="form-control" id="ferias-valor" disabled>
         <input type="range" class="form-range" id="ferias-slider" min="0" max="100">
@@ -96,19 +108,31 @@ font-family:monospace; border-radius:4px;">Repositório no GitHub</a></p>
     </div>
 
     <div class="mb-2">
-      <label class="form-label">Reserva <span>(<span id="reserva-percent">34</span>%)</span></label>
+      <label class="form-label">Reserva
+		<span>(<span id="reserva-percent">34</span>%)</span>
+		<small>(R$ <span id="reserva-total">0.00</span> em 11 meses)</small>
+	  </label>
       <div class="input-row">
         <input type="number" step="0.01" class="form-control" id="reserva-valor" disabled>
         <input type="range" class="form-range" id="reserva-slider" min="0" max="100" disabled>
       </div>
     </div>
   </div>
+	<p class="text-center my-2"><a href="https://github.com/Eskelsen/BabiCalc" target="_blank" style="color:#666; text-decoration:none; padding:4px 4px;">BabiCalc</a></p>
   </form>
 </div>
 
 <script>
 
 const orcamentoGlobal = document.getElementById('orcamento');
+
+document.addEventListener('mousedown', (e) => {
+  if (e.target !== orcamentoGlobal) orcamentoGlobal.blur();
+});
+
+document.addEventListener('touchstart', (e) => {
+  if (e.target !== orcamentoGlobal) orcamentoGlobal.blur();
+});
 
 const fixoSlider = document.getElementById('fixo-slider');
 const variavelSlider = document.getElementById('variavel-slider');
@@ -160,13 +184,13 @@ function atualizarQuadro(exclude = 'reserva'){
 		restanteSlider.value = percent.toFixed(2);
 		restantePercent.textContent = percent.toFixed(1);
   })
-  gastoCorrente();
+  outrosValores();
   if (exclude!='reserva') {
 	atualizarQuadro('reserva');
   }
 }
 
-function gastoCorrente(){
+function outrosValores(){
 	let fixo = document.getElementById('fixo-valor').value || 0;
 	let variavel = document.getElementById('variavel-valor').value || 0;
 	document.getElementById('corrente-valor').value = (parseFloat(fixo) +  parseFloat(variavel)).toFixed(2);
@@ -176,6 +200,11 @@ function gastoCorrente(){
 	document.getElementById('corrente-slider').value = percent.toFixed(2);
 	document.getElementById('corrente-percent').textContent = percent.toFixed(2);
 	document.getElementById('gasto-dia').textContent = parseFloat(variavel/30).toFixed(2);
+	
+	let ferias = restanteValor = document.getElementById('ferias-valor').value;
+	document.getElementById('ferias-total').textContent = parseFloat(ferias*11).toFixed(2);
+	let reserva = restanteValor = document.getElementById('reserva-valor').value;
+	document.getElementById('reserva-total').textContent = parseFloat(reserva*11).toFixed(2);
 }
 
 function somatoria(){
