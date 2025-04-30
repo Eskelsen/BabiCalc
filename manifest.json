@@ -7,17 +7,17 @@
   "theme_color": "#af5ebd",
   "icons": [
     {
-      "src": "/tools/babicalc/babi-48.png",
+      "src": "/tools/babicalc/assets/babi-48.png",
       "sizes": "48x48",
       "type": "image/png"
     },
     {
-      "src": "/tools/babicalc/babi-144.png",
+      "src": "/tools/babicalc/assets/babi-144.png",
       "sizes": "144x144",
       "type": "image/png"
     },
     {
-      "src": "/tools/babicalc/babi-512.png",
+      "src": "/tools/babicalc/assets/babi-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
