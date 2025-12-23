@@ -45,9 +45,54 @@
 		color: #999;
 	}
 
+	#offline-overlay {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.55);
+		backdrop-filter: blur(3px);
+		z-index: 99999;
+
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		pointer-events: all;
+	}
+
+	#offline-overlay[hidden] {
+		display: none;
+	}
+
+	.offline-box {
+		background: #fff;
+		padding: 32px 40px;
+		border-radius: 10px;
+		max-width: 380px;
+		width: 90%;
+		text-align: center;
+		box-shadow: 0 10px 30px rgba(0,0,0,.25);
+	}
+
+	.offline-box h2 {
+		margin-top: 0;
+	}
+
+	body.offline {
+		overflow: hidden; /* bloqueia scroll */
+	}
   </style>
 </head>
 <body class="bg-light py-3">
+	<div id="offline-overlay" hidden>
+		<div class="offline-box">
+			<h2>😕 Sem conexão</h2>
+			<p>
+				Sua internet caiu.<br>
+				Assim que a conexão voltar, o sistema continua normalmente.
+			</p>
+			<button onclick="location.reload()">Tentar agora</button>
+		</div>
+	</div>
 
 	<div class="container">
     <h1 class="text-center">BabiCalc</h1>
@@ -254,6 +299,43 @@ atualizarQuadro();
 if ('serviceWorker' in navigator) {
 	navigator.serviceWorker.register('sw.js');
 }
+</script>
+<script>
+(function () {
+    const overlay = document.getElementById("offline-overlay");
+
+    function goOffline() {
+        document.body.classList.add("offline");
+        overlay.hidden = false;
+    }
+
+    function goOnline() {
+        document.body.classList.remove("offline");
+        overlay.hidden = true;
+    }
+
+    function check() {
+        if (!navigator.onLine) {
+            goOffline();
+        }
+    }
+
+    window.addEventListener("offline", goOffline);
+    window.addEventListener("online", goOnline);
+
+    // checagem inicial
+    check();
+})();
+document.addEventListener("submit", function (e) {
+    if (!navigator.onLine) {
+        e.preventDefault();
+    }
+}, true);
+document.addEventListener("click", function (e) {
+    if (!navigator.onLine && e.target.closest("a")) {
+        e.preventDefault();
+    }
+}, true);
 </script>
 </body>
 </html>
