@@ -21,25 +21,26 @@
     .report-card {
       border-left: 4px solid var(--main-color);
       background: #fff;
-      padding: 1rem;
-      margin-bottom: 1rem;
+      padding: 0.6rem;
+      margin-bottom: 0.5rem;
       border-radius: 0.5rem;
       box-shadow: 0 1px 4px rgba(0,0,0,0.05);
     }
     .report-label {
       font-weight: 500;
       color: #555;
-      font-size: 0.95rem;
+      font-size: 0.85rem;
     }
     .report-value {
-      font-size: 1.4rem;
+      font-size: 1.2rem;
       font-weight: 600;
       color: var(--main-color);
     }
-    @media print {
-      button { display: none; }
-      body { background: white; }
-    }
+	@media print {
+	  .btn-danger {
+		display: none !important;
+	  }
+	}
   </style>
 </head>
 <body>
