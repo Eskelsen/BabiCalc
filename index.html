@@ -85,12 +85,8 @@
 <body class="bg-light py-3">
 	<div id="offline-overlay" hidden>
 		<div class="offline-box">
-			<h2>😕 Sem conexão</h2>
-			<p>
-				Sua internet caiu.<br>
-				Assim que a conexão voltar, o sistema continua normalmente.
-			</p>
-			<button onclick="location.reload()">Tentar agora</button>
+			<h2 class="mb-4">Sem conexão</h2>
+			<p>Este sistema depende de conexão ativa.</p>
 		</div>
 	</div>
 
@@ -295,11 +291,13 @@ function gerarLinkTicket() {
 atualizarQuadro();
 
 </script>
+
 <script>
 if ('serviceWorker' in navigator) {
 	navigator.serviceWorker.register('sw.js');
 }
 </script>
+
 <script>
 (function () {
     const overlay = document.getElementById("offline-overlay");
@@ -323,7 +321,6 @@ if ('serviceWorker' in navigator) {
     window.addEventListener("offline", goOffline);
     window.addEventListener("online", goOnline);
 
-    // checagem inicial
     check();
 })();
 document.addEventListener("submit", function (e) {
@@ -337,5 +334,6 @@ document.addEventListener("click", function (e) {
     }
 }, true);
 </script>
+
 </body>
 </html>
